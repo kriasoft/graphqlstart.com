@@ -6,12 +6,12 @@ description: >-
 
 # Getting Started
 
-## Step 1: Create a new Node.js project
+## Step 1: Create Node.js project
 
 During this step, you want to ensure that at least the following things are taken care of:
 
 * You can use the latest \(modern\) JavaScript syntax \(most likely using [Babel](https://babeljs.io/) \)
-* You can launch the app by running `yarn start` \(or, `npm run start`\) which is a commonly used convention.
+* You can launch the app by running `yarn start`  which is a commonly used convention.
 * When you make changes to the source code, the app \(API\) automatically restarts \(see [Nodemon](https://github.com/remy/nodemon)\).
 
 ![Basic Node.js project in VS Code ](.gitbook/assets/graphql-example-01.png)
@@ -97,7 +97,7 @@ At this point, when you launch the app by running `yarn start` and navigate to `
 **Congratulations!** This means that the step \#1 is complete and we can move on to the next one — creating our first GraphQL schema required by the **`express-graphql`** middleware.
 {% endhint %}
 
-## Step 2: Create a GraphQL schema
+## Step 2: Create GraphQL schema
 
 Basically, you create an GraphQL API by describing the hierarchy \(schema\) of all the \(query\) fields and mutations that the API must support.
 
@@ -132,6 +132,10 @@ query {
 {% endtabs %}
 
 It's asking for `arch`, `platform`, and `uptime` values grouped under the top-level `envrionment` field.
+
+For this particular API we would need to implement just one GraphQL type \("Environment"\), and one top-level query field "environment". But since, we're planning to add more types and query fields later on, it would be good idea to group them under `src/types` and `src/queires`  folders, plus you would add `src/schema.js` file with the "schema" GraphQL object type.
+
+![](.gitbook/assets/graphql-example-03.png)
 
 ...
 
