@@ -10,7 +10,7 @@ description: >-
 
 During this step, you want to ensure that at least the following things are taken care of:
 
-* You can use the latest \(modern\) JavaScript syntax \(most likely using [Babel](https://babeljs.io/) transpiler\)
+* You can use the latest \(modern\) JavaScript syntax \(most likely using [Babel](https://babeljs.io/) \)
 * You can launch the app by running `yarn start` \(or, `npm run start`\) which is a commonly used convention.
 * When you make changes to the source code, the app \(API\) automatically restarts \(see [Nodemon](https://github.com/remy/nodemon)\).
 
@@ -30,7 +30,7 @@ $ yarn add nodemon --dev
 $ yarn add @babel/core @babel/cli @babel/node @babel/preset-env --dev --exact
 ```
 
-Create `.babelrc` file, add `start` script to the `package.json` file:
+Create `.babelrc` file containing Babel configuration. Add `"start"` script to the `package.json` file:
 
 {% code-tabs %}
 {% code-tabs-item title="package.json" %}
@@ -70,7 +70,7 @@ Create `.babelrc` file, add `start` script to the `package.json` file:
 {% endcode-tabs %}
 
 {% hint style="warning" %}
-Note that the actual versions of all the listed dependencies may differ but it shouldn't  be a problem.
+Note that the actual versions of all the listed dependencies above may differ from what you would end up having in your `package.json` file, but it shouldn't  be a problem.
 {% endhint %}
 
 Finally, create `src/index.js` file that will serve as an entry point to the \([Express.js](http://expressjs.com/)\) app:
@@ -82,24 +82,26 @@ import graphql from 'express-graphql';
 const app = express();
 
 app.use('/', graphql({
-  schema: null,
+  schema: null, // TODO: Implement the GraphQL schema
   graphiql: process.env.NODE_ENV !== 'production',
 }));
 
 app.listen(process.env.PORT || 8080);
 ```
 
-At this point, when you launch the app by running `yarn start` and navigate to `http://localhost:3000/` in the browser's window, you must be able to see the following: 
+At this point, when you launch the app by running `yarn start` and navigate to `http://localhost:8080/` in the browser's window, you must be able to see the following: 
 
 ![](.gitbook/assets/graphql-example-02.png)
 
 {% hint style="success" %}
-Congratulations! It means that this step is complete and we can move on to the next one, creating our first GraphQL schema.
+**Congratulations!** This means that the step \#1 is complete and we can move on to the next one — creating our first GraphQL schema required by the **`express-graphql`** middleware.
 {% endhint %}
 
-## Step 2: Create a basic GraphQL schema
+## Step 2: Create a GraphQL schema
 
-For starter, let's build a basic API running on [http://localhost:8080/](http://localhost:8080/) that would handle the following query:
+Basically, you create an GraphQL API by describing the hierarchy \(schema\) of all the \(query\) fields and mutations that the API must support.
+
+Imagine that we need to fetch some OS-related info from the server using this query:
 
 {% tabs %}
 {% tab title="GraphQL Query" %}
@@ -118,7 +120,7 @@ query {
 ```javascript
 {
   data: {
-    environment": {
+    environment: {
       arch: 'x64',
       platform: 'linux',
       uptime: 11.256
@@ -129,13 +131,7 @@ query {
 {% endtab %}
 {% endtabs %}
 
-{% tabs %}
-{% tab title="\`some\`" %}
+It's asking for `arch`, `platform`, and `uptime` values grouped under the top-level `envrionment` field.
 
-{% endtab %}
-
-{% tab title="Second Tab" %}
-
-{% endtab %}
-{% endtabs %}
+...
 
