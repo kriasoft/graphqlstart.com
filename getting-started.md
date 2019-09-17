@@ -91,7 +91,6 @@ app.use("/", graphql({
 app.listen(port, () => {
   console.log(`GraphQL API listening on http://localhost:${port}/`);
 });
-
 ```
 {% endcode-tabs-item %}
 {% endcode-tabs %}
@@ -238,7 +237,6 @@ export default new GraphQLSchema({
     }
   })
 });
-
 ```
 {% endcode-tabs-item %}
 {% endcode-tabs %}
@@ -263,8 +261,6 @@ app.use("/", graphql({
 app.listen(port, () => {
   console.log(`GraphQL API listening on http://localhost:${port}/`);
 });
-
-
 ```
 {% endcode-tabs-item %}
 {% endcode-tabs %}
@@ -272,4 +268,81 @@ app.listen(port, () => {
 With all that in place, you must be able to test our first GraphQL query using _GraphiQL_ IDE that `express-graphql` middleware provides out of the box:
 
 ![GraphQL Query Example in GraphiQL IDE](.gitbook/assets/graphql-example-04.png)
+
+## Step 3: Create GraphQL Context
+
+Inside of the `resolve()` methods we would often need access to the \(request\) context data such the currently logged-in user, data loaders \(more on that later\), etc.
+
+For this purpose, let's create `Context` class and pass it to the `express-graphql` middleware alongside the schema:
+
+{% code-tabs %}
+{% code-tabs-item title="src/context.js" %}
+```javascript
+export class Context {
+  constructor(req) {
+    this._req = req;
+  }
+
+  get user() {
+    return this._req.user;
+  }
+
+  get hostname() {
+    return this._req.hostname;
+  }
+}
+```
+{% endcode-tabs-item %}
+{% endcode-tabs %}
+
+{% code-tabs %}
+{% code-tabs-item title="src/index.js" %}
+```javascript
+import express from "express";
+import graphql from "express-graphql";
+import schema from "./schema";
+import { Context } from "./context";
+
+const app = express();
+const port = process.env.PORT || 8080;
+
+app.use("/", graphql(req => ({
+  schema,
+  context: new Context(req),
+  graphiql: process.env.NODE_ENV !== "production"
+})));
+
+app.listen(port, () => {
+  console.log(`GraphQL API listening on http://localhost:${port}/`);
+});
+```
+{% endcode-tabs-item %}
+{% endcode-tabs %}
+
+Just for quick demonstration, let's see how to use this context object inside of a `resolve()` method:
+
+{% code-tabs %}
+{% code-tabs-item title="src/types/environment.js" %}
+```javascript
+import { GraphQLObjectType, GraphQLString, GraphQLFloat } from "graphql";
+
+export const EnvironmentType = new GraphQLObjectType({
+  name: "Environment",
+
+  fields: {
+    ...,
+  
+    hostname: {
+      type: GraphQLString,
+      resolve(self, args, ctx) {
+        return ctx.hostname;
+      }
+    }
+  }
+});
+```
+{% endcode-tabs-item %}
+{% endcode-tabs %}
+
+
 
