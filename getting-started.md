@@ -6,7 +6,7 @@ description: >-
 
 # Getting Started
 
-## Step 1: Create Node.js project
+## Step 1: Create Node.js Project <a id="create-nodejs-project"></a>
 
 During this step, you want to ensure that at least the following things are taken care of:
 
@@ -103,7 +103,7 @@ At this point, when you launch the app by running `yarn start` and navigate to `
 **Congratulations!** This means that the step \#1 is complete and we can move on to the next one — creating our first GraphQL schema required by the **`express-graphql`** middleware.
 {% endhint %}
 
-## Step 2: Create GraphQL schema
+## Step 2: Create GraphQL Schema <a id="create-graphql-schema"></a>
 
 Basically, you create an GraphQL API by describing the hierarchy \(schema\) of all the \(query\) fields and mutations that the API must support.
 
@@ -269,7 +269,7 @@ With all that in place, you must be able to test our first GraphQL query using _
 
 ![GraphQL Query Example in GraphiQL IDE](.gitbook/assets/graphql-example-04.png)
 
-## Step 3: Create GraphQL Context
+## Step 3: Create GraphQL Context <a id="create-graphql-context"></a>
 
 Inside of the `resolve()` methods we would often need access to the \(request\) context data such the currently logged-in user, data loaders \(more on that later\), etc.
 
@@ -344,5 +344,52 @@ export const EnvironmentType = new GraphQLObjectType({
 {% endcode-tabs-item %}
 {% endcode-tabs %}
 
+## Step 4: Configure a Debugger <a id="configure-debugger"></a>
 
+Sooner or later you may bump into a situation where you would need to debug your code. It would be wise to ensure that debugging is working OK, even before you actually need it. In case with VS Code, setting up the debugger takes just two simple steps:
+
+* Pass `--insepect` argument to `nodemon`.
+* Create a launch configuration that would attach to an existing Node.js process.
+
+For the first step, you can copy and paste the `start` script inside of `package.json` file as follows:
+
+{% code-tabs %}
+{% code-tabs-item title="package.json" %}
+```yaml
+{
+  ...,
+  "scripts": {
+    "build": "babel src --out-dir build --source-maps=inline --delete-dir-on-start --copy-files --verbose",
+    "start": "yarn build --watch & sleep 1 && nodemon --watch build build/index.js",
+    "debug": "yarn build --watch & sleep 1 && nodemon --inspect --watch build build/index.js"
+  }
+}
+```
+{% endcode-tabs-item %}
+{% endcode-tabs %}
+
+And then create `.vscode/launch.json` file instructing VS Code how it should launch the debugger:
+
+{% code-tabs %}
+{% code-tabs-item title=".vscode/launch.json" %}
+```yaml
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "node",
+      "request": "attach",
+      "name": "Attach to Node.js",
+      "processId": "${command:PickProcess}",
+      "restart": true,
+      "protocol": "inspector"
+    }
+  ]
+}
+
+```
+{% endcode-tabs-item %}
+{% endcode-tabs %}
+
+![GraphQL API debugging in VS Code](.gitbook/assets/graphql-example-05.gif)
 
