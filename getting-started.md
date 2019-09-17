@@ -13,8 +13,9 @@ During this step, you want to ensure that at least the following things are take
 * You can use the latest \(modern\) JavaScript syntax \(most likely using [Babel](https://babeljs.io/) \)
 * You can launch the app by running `yarn start`  which is a commonly used convention.
 * When you make changes to the source code, the app \(API\) automatically restarts \(see [Nodemon](https://github.com/remy/nodemon)\).
+* You can debug you Node.js code using VS Code debugger or similar tool.
 
-![Basic Node.js project in VS Code ](.gitbook/assets/graphql-example-01.png)
+![Node.js project skeleton in VS Code](.gitbook/assets/graphql-example-01.gif)
 
 Assuming that you already have [**Node.js**](https://nodejs.org) and [**Yarn**](https://yarnpkg.com) \(or, NPM\) installed,  bootstrap a new Node.js project by running:
 
@@ -26,8 +27,7 @@ $ yarn init
 $ yarn add graphql express express-graphql
 
 # Installs Nodemon and Babel (dev dependencies)
-$ yarn add nodemon --dev
-$ yarn add @babel/core @babel/cli @babel/node @babel/preset-env --dev --exact
+$ yarn add nodemon @babel/core @babel/cli @babel/preset-env --dev
 ```
 
 Create `.babelrc` file containing Babel configuration. Add `"start"` script to the `package.json` file:
@@ -45,14 +45,14 @@ Create `.babelrc` file containing Babel configuration. Add `"start"` script to t
     "graphql": "^14.5.4"
   },
   "devDependencies": {
-    "@babel/cli": "7.6.0",
-    "@babel/core": "7.6.0",
-    "@babel/node": "7.6.1",
-    "@babel/preset-env": "7.6.0",
-    "nodemon": "1.19.2"
+    "@babel/cli": "^7.6.0",
+    "@babel/core": "^7.6.0",
+    "@babel/node": "^7.6.1",
+    "nodemon": "^1.19.2"
   },
   "scripts": {
-    "start": "nodemon src/index.js localhost 8080 --exec ./node_modules/.bin/babel-node"
+    "build": "babel src --out-dir build --source-maps=inline --delete-dir-on-start --copy-files --verbose",
+    "start": "yarn build --watch & sleep 1 && nodemon --watch build build/index.js"
   }
 }
 ```
@@ -62,7 +62,7 @@ Create `.babelrc` file containing Babel configuration. Add `"start"` script to t
 ```yaml
 {
   "presets": [
-    "@babel/preset-env"
+    ["@babel/preset-env", { "targets": { "node": "10.15.3" } }]
   ]
 }
 ```
@@ -80,13 +80,16 @@ import express from 'express';
 import graphql from 'express-graphql';
 
 const app = express();
+const port = process.env.PORT || 8080;
 
 app.use('/', graphql({
-  schema: null, // TODO: Implement the GraphQL schema
+  schema: null, // TODO: Implement GraphQL API schema
   graphiql: process.env.NODE_ENV !== 'production',
 }));
 
-app.listen(process.env.PORT || 8080);
+app.listen(port, () => {
+  console.log(`GraphQL API listening on http://localhost:${port}/`);
+});
 ```
 
 At this point, when you launch the app by running `yarn start` and navigate to `http://localhost:8080/` in the browser's window, you must be able to see the following: 
@@ -135,7 +138,7 @@ It's asking for `arch`, `platform`, and `uptime` values grouped under the top-le
 
 For this particular API we would need to implement just one GraphQL type \("Environment"\), and one top-level query field "environment". But since, we're planning to add more types and query fields later on, it would be good idea to group them under `src/types` and `src/queires`  folders, plus you would add `src/schema.js` file with the "schema" GraphQL object type.
 
-![](.gitbook/assets/graphql-example-03.png)
+![GraphQL API Schema Type](.gitbook/assets/graphql-example-03%20%281%29.png)
 
 ...
 
