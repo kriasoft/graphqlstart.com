@@ -179,9 +179,9 @@ export const EnvironmentType = new GraphQLObjectType({
 {% endcode-tabs-item %}
 {% endcode-tabs %}
 
-Whenever a curtain field is requested by the client, the GraphQL API runtime would call the corresponding `resolve()` function that would return the actual value for that field. Note that this method can be async \(returning a `Promise`\).
+Whenever a certain field is requested by the client, the GraphQL API runtime would call the corresponding `resolve()` function that would return the actual value for that field. Note that these resolve methods can be async \(returning a `Promise`\).
 
-For the **top-level fields**, like `environment` field in our example, we're going to introduce yet another convention ⁠— placing them in separate files under the `src/queries` folder. In many cases, those top-level fields would contain large `resolve()` functions and most likely you won't like having all of them within the same file. So, the `environment` field is going to be exported from `src/queires/environment.js`:
+For the **top-level fields**, like `environment` field in our example, we're going to introduce yet another convention ⁠— placing them in multiple files under the `src/queries` folder. In many cases, those top-level fields would contain large `resolve()` functions and most likely you won't like having all of them within the same file. So, the `environment` field is going to be exported from `src/queires/environment.js`:
 
 {% code-tabs %}
 {% code-tabs-item title="src/queries/environment.js" %}
@@ -196,7 +196,7 @@ export const environment = {
 {% endcode-tabs-item %}
 {% endcode-tabs %}
 
-Note, that the field resolves to an empty object `{}`. If it would resolve to `null` or `undefined` the query traversal would stop right there, and the GraphQL query \(see example above\) would resolve to:
+Note, that the field resolves to an empty object `{}`. If it would resolve to `null` or `undefined` the query traversal would stop right there, and the GraphQL query \(from the example above\) would resolve to:
 
 ```yaml
 {
@@ -269,7 +269,7 @@ app.listen(port, () => {
 {% endcode-tabs-item %}
 {% endcode-tabs %}
 
-With all this in place, you must be able to test our first GraphQL query:
+With all that in place, you must be able to test our first GraphQL query using _GraphiQL_ IDE that `express-graphql` middleware provides out of the box:
 
 ![GraphQL Query Example in GraphiQL IDE](.gitbook/assets/graphql-example-04.png)
 
