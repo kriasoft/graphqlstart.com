@@ -1,4 +1,4 @@
-# Authentication & Permissions
+# Security and Permissions
 
 Coming soon.
 

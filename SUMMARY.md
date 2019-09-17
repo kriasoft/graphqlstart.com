@@ -2,7 +2,8 @@
 
 * [What is GraphQL Start](README.md)
 * [Getting Started](getting-started.md)
-* [Query Fields & Mutations](queries.md)
-* [Authentication & Permissions](security.md)
-* [Testing & Deployment](test-and-deploy.md)
+* [Batching and Caching](performance.md)
+* [Input Validation](validation.md)
+* [Security and Permissions](security.md)
+* [Testing and Deployment](deployment.md)
 
