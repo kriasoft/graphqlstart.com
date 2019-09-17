@@ -141,6 +141,8 @@ It's asking for `arch`, `platform`, and `uptime` values grouped under the top-le
 
 For this particular API we would need to implement just one GraphQL type \(`Environment`\), and one top-level query field `environment`. But since, we're planning to add more types and query fields later on, it would be a good idea to group them under `src/types` and `src/queires`  folders. Plus, you would add `src/schema.js` file exporting the "schema" GraphQL object type.
 
+
+
 ![GraphQL API Schema Type](.gitbook/assets/graphql-example-03%20%281%29.png)
 
 {% hint style="info" %}
@@ -392,4 +394,8 @@ And then create `.vscode/launch.json` file instructing VS Code how it should lau
 {% endcode-tabs %}
 
 ![GraphQL API debugging in VS Code](.gitbook/assets/graphql-example-05.gif)
+
+{% hint style="info" %}
+The source code for this chapter is available on GitHub &gt; [**kriasoft/graphql-api-examples**](https://github.com/kriasoft/graphql-api-examples)\*\*\*\*
+{% endhint %}
 
