@@ -42,12 +42,12 @@ Create `.babelrc` file containing Babel configuration. Add `"start"` script to t
   "dependencies": {
     "express": "^4.17.1",
     "express-graphql": "^0.9.0",
-    "graphql": "^14.5.4"
+    "graphql": "^14.5.6"
   },
   "devDependencies": {
     "@babel/cli": "^7.6.0",
     "@babel/core": "^7.6.0",
-    "@babel/node": "^7.6.1",
+    "@babel/preset-env": "^7.6.0",
     "nodemon": "^1.19.2"
   },
   "scripts": {
@@ -75,22 +75,26 @@ Note that the actual versions of all the listed dependencies above may differ fr
 
 Finally, create `src/index.js` file that will serve as an entry point to the \([Express.js](http://expressjs.com/)\) app:
 
+{% code-tabs %}
+{% code-tabs-item title="src/index.js" %}
 ```javascript
-import express from 'express';
-import graphql from 'express-graphql';
+import express from "express";
+import graphql from "express-graphql";
 
 const app = express();
 const port = process.env.PORT || 8080;
 
-app.use('/', graphql({
-  schema: null, // TODO: Implement GraphQL API schema
-  graphiql: process.env.NODE_ENV !== 'production',
+app.use("/", graphql({
+  schema: null, // TODO: Implement GraphQL schema
 }));
 
 app.listen(port, () => {
   console.log(`GraphQL API listening on http://localhost:${port}/`);
 });
+
 ```
+{% endcode-tabs-item %}
+{% endcode-tabs %}
 
 At this point, when you launch the app by running `yarn start` and navigate to `http://localhost:8080/` in the browser's window, you must be able to see the following: 
 
@@ -136,9 +140,136 @@ query {
 
 It's asking for `arch`, `platform`, and `uptime` values grouped under the top-level `envrionment` field.
 
-For this particular API we would need to implement just one GraphQL type \("Environment"\), and one top-level query field "environment". But since, we're planning to add more types and query fields later on, it would be good idea to group them under `src/types` and `src/queires`  folders, plus you would add `src/schema.js` file with the "schema" GraphQL object type.
+For this particular API we would need to implement just one GraphQL type \(`Environment`\), and one top-level query field `environment`. But since, we're planning to add more types and query fields later on, it would be a good idea to group them under `src/types` and `src/queires`  folders. Plus, you would add `src/schema.js` file exporting the "schema" GraphQL object type.
 
 ![GraphQL API Schema Type](.gitbook/assets/graphql-example-03%20%281%29.png)
 
-...
+{% hint style="info" %}
+In a real-world project, you may end-up having 50+ GraphQL types, depending how big is the project. Taking that into consideration, you may want to export related GraphQL types from the same file. For example, **`ProductType`** and **`ProductCategoryType`** declarations can be exported from the **`src/types/product.js`**file.
+{% endhint %}
+
+The `Environment` GraphQL type is going to list `arch`, `platform`, and `uptime` fields, alongside their types and `resolve()` methods:
+
+{% code-tabs %}
+{% code-tabs-item title="src/types/environment.js" %}
+```javascript
+import { GraphQLObjectType, GraphQLString, GraphQLFloat } from "graphql";
+
+export const EnvironmentType = new GraphQLObjectType({
+  name: "Environment",
+
+  fields: {
+    arch: {
+      type: GraphQLString,
+      resolve: () => process.arch
+    },
+
+    platform: {
+      type: GraphQLString,
+      resolve: () => process.platform
+    },
+
+    uptime: {
+      type: GraphQLFloat,
+      resolve: () => process.uptime()
+    }
+  }
+});
+```
+{% endcode-tabs-item %}
+{% endcode-tabs %}
+
+Whenever a curtain field is requested by the client, the GraphQL API runtime would call the corresponding `resolve()` function that would return the actual value for that field. Note that this method can be async \(returning a `Promise`\).
+
+For the **top-level fields**, like `environment` field in our example, we're going to introduce yet another convention ⁠— placing them in separate files under the `src/queries` folder. In many cases, those top-level fields would contain large `resolve()` functions and most likely you won't like having all of them within the same file. So, the `environment` field is going to be exported from `src/queires/environment.js`:
+
+{% code-tabs %}
+{% code-tabs-item title="src/queries/environment.js" %}
+```javascript
+import { EnvironmentType } from "../types";
+
+export const environment = {
+  type: EnvironmentType,
+  resolve: () => ({})
+};
+```
+{% endcode-tabs-item %}
+{% endcode-tabs %}
+
+Note, that the field resolves to an empty object `{}`. If it would resolve to `null` or `undefined` the query traversal would stop right there, and the GraphQL query \(see example above\) would resolve to:
+
+```yaml
+{
+  "data": {
+    "environment": null
+  }
+}
+```
+
+You would also need `src/queries/index.js` and `src/types/index.js` re-exporting everything from the sibling files:
+
+{% code-tabs %}
+{% code-tabs-item title="src/queries/index.js" %}
+```javascript
+export * from './envrionment';
+```
+{% endcode-tabs-item %}
+
+{% code-tabs-item title="src/types/index.js" %}
+```javascript
+export * from './environment';
+```
+{% endcode-tabs-item %}
+{% endcode-tabs %}
+
+The `environment` field declaration we just created is going to be used in the root GraphQL object type:
+
+{% code-tabs %}
+{% code-tabs-item title="src/schema.js" %}
+```javascript
+import { GraphQLSchema, GraphQLObjectType } from "graphql";
+import * as queries from "./queries";
+
+export default new GraphQLSchema({
+  query: new GraphQLObjectType({
+    name: "Query",
+    fields: {
+      ...queries
+    }
+  })
+});
+
+```
+{% endcode-tabs-item %}
+{% endcode-tabs %}
+
+Finally, we're going to pass this schema type to the `express-graphql` middleware inside `src/index.js` :
+
+{% code-tabs %}
+{% code-tabs-item title="src/index.js" %}
+```javascript
+import express from "express";
+import graphql from "express-graphql";
+import schema from "./schema";
+
+const app = express();
+const port = process.env.PORT || 8080;
+
+app.use("/", graphql({
+  schema,
+  graphiql: process.env.NODE_ENV !== "production"
+}));
+
+app.listen(port, () => {
+  console.log(`GraphQL API listening on http://localhost:${port}/`);
+});
+
+
+```
+{% endcode-tabs-item %}
+{% endcode-tabs %}
+
+With all this in place, you must be able to test our first GraphQL query:
+
+![GraphQL Query Example in GraphiQL IDE](.gitbook/assets/graphql-example-04.png)
 
