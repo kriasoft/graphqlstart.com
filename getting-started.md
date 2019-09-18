@@ -13,7 +13,7 @@ During this step, you want to ensure that at least the following things are take
 * You can use the latest \(modern\) JavaScript syntax \(most likely using [Babel](https://babeljs.io/) \)
 * You can launch the app by running `yarn start`  which is a commonly used convention.
 * When you make changes to the source code, the app \(API\) automatically restarts \(see [Nodemon](https://github.com/remy/nodemon)\).
-* You can debug you Node.js code using VS Code debugger or similar tool.
+* Node.js debugger is configured and ready to be used when needed.
 
 ![Node.js project skeleton in VS Code](.gitbook/assets/graphql-example-01.gif)
 
@@ -396,6 +396,6 @@ And then create `.vscode/launch.json` file instructing VS Code how it should lau
 ![GraphQL API debugging in VS Code](.gitbook/assets/graphql-example-05.gif)
 
 {% hint style="info" %}
-The source code for this chapter is available on GitHub &gt; [**kriasoft/graphql-api-examples**](https://github.com/kriasoft/graphql-api-examples)\*\*\*\*
+The source code for this chapter is available on [GitHub](https://github.com/kriasoft/graphql-api-examples) and [CodeSandbox](https://codesandbox.io/s/graphql-44c20) \(live demo\).
 {% endhint %}
 
