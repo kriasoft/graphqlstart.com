@@ -11,6 +11,6 @@
 
 * [GraphQL.js](https://github.com/graphql/graphql-js)
 * [GraphQL API Examples](https://github.com/kriasoft/graphql-api-examples)
-* [GraphQL Foundation](https://graphql.org/)
+* [GraphQL API Playground](https://codesandbox.io/s/graphql-44c20)
 * [Send Feedback](https://twitter.com/messages/compose?recipient_id=16394396)
 
