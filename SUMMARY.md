@@ -7,3 +7,10 @@
 * [Security and Permissions](security.md)
 * [Testing and Deployment](deployment.md)
 
+## External Links <a id="links"></a>
+
+* [GraphQL.js](https://github.com/graphql/graphql-js)
+* [GraphQL API Examples](https://github.com/kriasoft/graphql-api-examples)
+* [GraphQL Foundation](https://graphql.org/)
+* [Send Feedback](https://twitter.com/messages/compose?recipient_id=16394396)
+
