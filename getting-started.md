@@ -4,7 +4,7 @@ description: >-
   JavaScript.
 ---
 
-# Getting Started
+# 1. Getting Started
 
 ## Step 1: Create Node.js Project <a id="create-nodejs-project"></a>
 
