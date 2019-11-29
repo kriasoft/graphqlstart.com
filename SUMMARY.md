@@ -12,5 +12,6 @@
 * [GraphQL.js](https://github.com/graphql/graphql-js)
 * [GraphQL API Examples](https://github.com/kriasoft/graphql-api-examples)
 * [GraphQL API Playground](https://codesandbox.io/s/graphql-44c20)
+* [GraphQL API Chat \(Discord\)](https://discord.gg/PkRad23)
 * [Support me on Patreon 🎀](https://www.patreon.com/koistya)
 

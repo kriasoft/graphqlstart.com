@@ -32,8 +32,8 @@ $ yarn add nodemon @babel/core @babel/cli @babel/preset-env --dev
 
 Create `.babelrc` file containing Babel configuration. Add `"start"` script to the `package.json` file:
 
-{% code-tabs %}
-{% code-tabs-item title="package.json" %}
+{% tabs %}
+{% tab title="package.json" %}
 ```yaml
 {
   "name": "api",
@@ -56,9 +56,9 @@ Create `.babelrc` file containing Babel configuration. Add `"start"` script to t
   }
 }
 ```
-{% endcode-tabs-item %}
+{% endtab %}
 
-{% code-tabs-item title=".babelrc" %}
+{% tab title=".babelrc" %}
 ```yaml
 {
   "presets": [
@@ -66,8 +66,8 @@ Create `.babelrc` file containing Babel configuration. Add `"start"` script to t
   ]
 }
 ```
-{% endcode-tabs-item %}
-{% endcode-tabs %}
+{% endtab %}
+{% endtabs %}
 
 {% hint style="warning" %}
 Note that the actual versions of all the listed dependencies above may differ from what you would end up having in your `package.json` file, but it shouldn't  be a problem.
@@ -75,8 +75,7 @@ Note that the actual versions of all the listed dependencies above may differ fr
 
 Finally, create `src/index.js` file that will serve as an entry point to the \([Express.js](http://expressjs.com/)\) app:
 
-{% code-tabs %}
-{% code-tabs-item title="src/index.js" %}
+{% code title="src/index.js" %}
 ```javascript
 import express from "express";
 import graphql from "express-graphql";
@@ -92,8 +91,7 @@ app.listen(port, () => {
   console.log(`GraphQL API listening on http://localhost:${port}/`);
 });
 ```
-{% endcode-tabs-item %}
-{% endcode-tabs %}
+{% endcode %}
 
 At this point, when you launch the app by running `yarn start` and navigate to `http://localhost:8080/` in the browser's window, you must be able to see the following: 
 
@@ -151,8 +149,7 @@ In a real-world project, you may end-up having 50+ GraphQL types, depending how 
 
 The `Environment` GraphQL type is going to list `arch`, `platform`, and `uptime` fields, alongside their types and `resolve()` methods:
 
-{% code-tabs %}
-{% code-tabs-item title="src/types/environment.js" %}
+{% code title="src/types/environment.js" %}
 ```javascript
 import { GraphQLObjectType, GraphQLString, GraphQLFloat } from "graphql";
 
@@ -177,15 +174,13 @@ export const EnvironmentType = new GraphQLObjectType({
   }
 });
 ```
-{% endcode-tabs-item %}
-{% endcode-tabs %}
+{% endcode %}
 
 Whenever a certain field is requested by the client, the GraphQL API runtime would call the corresponding `resolve()` function that would return the actual value for that field. Note that these resolve methods can be async \(returning a `Promise`\).
 
 For the **top-level fields**, like `environment` field in our example, we're going to introduce yet another convention ⁠— placing them in multiple files under the `src/queries` folder. In many cases, those top-level fields would contain large `resolve()` functions and most likely you won't like having all of them within the same file. So, the `environment` field is going to be exported from `src/queires/environment.js`:
 
-{% code-tabs %}
-{% code-tabs-item title="src/queries/environment.js" %}
+{% code title="src/queries/environment.js" %}
 ```javascript
 import { EnvironmentType } from "../types";
 
@@ -194,8 +189,7 @@ export const environment = {
   resolve: () => ({})
 };
 ```
-{% endcode-tabs-item %}
-{% endcode-tabs %}
+{% endcode %}
 
 Note, that the field resolves to an empty object `{}`. If it would resolve to `null` or `undefined` the query traversal would stop right there, and the GraphQL query \(from the example above\) would resolve to:
 
@@ -209,24 +203,23 @@ Note, that the field resolves to an empty object `{}`. If it would resolve to `n
 
 You would also need `src/queries/index.js` and `src/types/index.js` re-exporting everything from the sibling files:
 
-{% code-tabs %}
-{% code-tabs-item title="src/queries/index.js" %}
+{% tabs %}
+{% tab title="src/queries/index.js" %}
 ```javascript
 export * from './envrionment';
 ```
-{% endcode-tabs-item %}
+{% endtab %}
 
-{% code-tabs-item title="src/types/index.js" %}
+{% tab title="src/types/index.js" %}
 ```javascript
 export * from './environment';
 ```
-{% endcode-tabs-item %}
-{% endcode-tabs %}
+{% endtab %}
+{% endtabs %}
 
 The `environment` field declaration we just created is going to be used in the root GraphQL object type:
 
-{% code-tabs %}
-{% code-tabs-item title="src/schema.js" %}
+{% code title="src/schema.js" %}
 ```javascript
 import { GraphQLSchema, GraphQLObjectType } from "graphql";
 import * as queries from "./queries";
@@ -240,13 +233,11 @@ export default new GraphQLSchema({
   })
 });
 ```
-{% endcode-tabs-item %}
-{% endcode-tabs %}
+{% endcode %}
 
 Finally, we're going to pass this schema type to the `express-graphql` middleware inside `src/index.js` :
 
-{% code-tabs %}
-{% code-tabs-item title="src/index.js" %}
+{% code title="src/index.js" %}
 ```javascript
 import express from "express";
 import graphql from "express-graphql";
@@ -264,8 +255,7 @@ app.listen(port, () => {
   console.log(`GraphQL API listening on http://localhost:${port}/`);
 });
 ```
-{% endcode-tabs-item %}
-{% endcode-tabs %}
+{% endcode %}
 
 With all that in place, you must be able to test our first GraphQL query using _GraphiQL_ IDE that `express-graphql` middleware provides out of the box:
 
@@ -277,8 +267,7 @@ Inside of the `resolve()` methods we would often need access to the \(request\) 
 
 For this purpose, let's create `Context` class and pass it to the `express-graphql` middleware alongside the schema:
 
-{% code-tabs %}
-{% code-tabs-item title="src/context.js" %}
+{% code title="src/context.js" %}
 ```javascript
 export class Context {
   constructor(req) {
@@ -294,11 +283,9 @@ export class Context {
   }
 }
 ```
-{% endcode-tabs-item %}
-{% endcode-tabs %}
+{% endcode %}
 
-{% code-tabs %}
-{% code-tabs-item title="src/index.js" %}
+{% code title="src/index.js" %}
 ```javascript
 import express from "express";
 import graphql from "express-graphql";
@@ -318,13 +305,11 @@ app.listen(port, () => {
   console.log(`GraphQL API listening on http://localhost:${port}/`);
 });
 ```
-{% endcode-tabs-item %}
-{% endcode-tabs %}
+{% endcode %}
 
 Just for quick demonstration, let's see how to use this context object inside of a `resolve()` method:
 
-{% code-tabs %}
-{% code-tabs-item title="src/types/environment.js" %}
+{% code title="src/types/environment.js" %}
 ```javascript
 import { GraphQLObjectType, GraphQLString, GraphQLFloat } from "graphql";
 
@@ -343,8 +328,7 @@ export const EnvironmentType = new GraphQLObjectType({
   }
 });
 ```
-{% endcode-tabs-item %}
-{% endcode-tabs %}
+{% endcode %}
 
 ## Step 4: Configure a Debugger <a id="configure-debugger"></a>
 
@@ -355,8 +339,7 @@ Sooner or later you may bump into a situation where you would need to debug your
 
 For the first step, you can copy and paste the `start` script inside of `package.json` file as follows:
 
-{% code-tabs %}
-{% code-tabs-item title="package.json" %}
+{% code title="package.json" %}
 ```yaml
 {
   ...,
@@ -367,13 +350,11 @@ For the first step, you can copy and paste the `start` script inside of `package
   }
 }
 ```
-{% endcode-tabs-item %}
-{% endcode-tabs %}
+{% endcode %}
 
 And then create `.vscode/launch.json` file instructing VS Code how it should launch the debugger:
 
-{% code-tabs %}
-{% code-tabs-item title=".vscode/launch.json" %}
+{% code title=".vscode/launch.json" %}
 ```yaml
 {
   "version": "0.2.0",
@@ -390,8 +371,7 @@ And then create `.vscode/launch.json` file instructing VS Code how it should lau
 }
 
 ```
-{% endcode-tabs-item %}
-{% endcode-tabs %}
+{% endcode %}
 
 ![GraphQL API debugging in VS Code](.gitbook/assets/graphql-example-05.gif)
 
