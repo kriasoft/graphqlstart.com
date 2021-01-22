@@ -206,7 +206,7 @@ You would also need `src/queries/index.js` and `src/types/index.js` re-exporting
 {% tabs %}
 {% tab title="src/queries/index.js" %}
 ```javascript
-export * from './envrionment';
+export * from './environment';
 ```
 {% endtab %}
 
