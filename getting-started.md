@@ -135,7 +135,7 @@ query {
 {% endtab %}
 {% endtabs %}
 
-It's asking for `arch`, `platform`, and `uptime` values grouped under the top-level `envrionment` field.
+It's asking for `arch`, `platform`, and `uptime` values grouped under the top-level `environment` field.
 
 For this particular API we would need to implement just one GraphQL type \(`Environment`\), and one top-level query field `environment`. But since, we're planning to add more types and query fields later on, it would be a good idea to group them under `src/types` and `src/queires`  folders. Plus, you would add `src/schema.js` file exporting the "schema" GraphQL object type.
 
